@@ -1,0 +1,115 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ */
+
+package com.mycompany.radix;
+
+/**
+ *
+ * @author kenca
+ */
+import java.util.Scanner;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Radix {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        List<String[]> rows = new ArrayList<>(); // store rows
+
+         while (true) {
+            System.out.print("Enter the origin base (2, 8, 10, 16) or type STOP to quit: ");
+            String baseInput = scanner.nextLine().trim();
+
+            if (baseInput.equalsIgnoreCase("STOP")) {
+                // Print the final table once before quitting
+                if (!rows.isEmpty()) {
+                    System.out.println();
+                    System.out.printf("%-30s %-30s %-30s %-30s%n",
+                            "Input", "Output 1", "Output 2", "Output 3");
+
+                    for (String[] row : rows) {
+                        System.out.printf("%-30s %-30s %-30s %-30s%n",
+                                row[0], row[1], row[2], row[3]);
+                    }
+                }
+                System.out.println("STOP"); // Print STOP below the table
+                break;
+            }
+
+            int base;
+            try {
+                base = Integer.parseInt(baseInput);
+                if (base != 2 && base != 8 && base != 10 && base != 16) {
+                    System.out.println("Invalid base. Please enter 2, 8, 10, or 16.");
+                    continue;
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Enter 2, 8, 10, 16, or STOP.");
+                continue;
+            }
+
+            System.out.print("Enter the number in base " + base + ": ");
+            String numberInput = scanner.nextLine().trim();
+
+            try {
+                int decimalValue = Integer.parseInt(numberInput, base);
+
+                // Prepare formatted outputs
+                String inputStr = "(" + numberInput + ")" + getSubscript(base);
+                String out1 = "";
+                String out2 = "";
+                String out3 = "";
+
+                if (base == 2) {
+                    out1 = "(" + Integer.toOctalString(decimalValue) + ")" + getSubscript(8);
+                    out2 = "(" + decimalValue + ")" + getSubscript(10);
+                    out3 = "(" + Integer.toHexString(decimalValue).toUpperCase() + ")" + getSubscript(16);
+                } else if (base == 8) {
+                    out1 = "(" + Integer.toBinaryString(decimalValue) + ")" + getSubscript(2);
+                    out2 = "(" + decimalValue + ")" + getSubscript(10);
+                    out3 = "(" + Integer.toHexString(decimalValue).toUpperCase() + ")" + getSubscript(16);
+                } else if (base == 10) {
+                    out1 = "(" + Integer.toBinaryString(decimalValue) + ")" + getSubscript(2);
+                    out2 = "(" + Integer.toOctalString(decimalValue) + ")" + getSubscript(8);
+                    out3 = "(" + Integer.toHexString(decimalValue).toUpperCase() + ")" + getSubscript(16);
+                } else if (base == 16) {
+                    out1 = "(" + Integer.toBinaryString(decimalValue) + ")" + getSubscript(2);
+                    out2 = "(" + Integer.toOctalString(decimalValue) + ")" + getSubscript(8);
+                    out3 = "(" + decimalValue + ")" + getSubscript(10);
+                }
+
+                // Save row to list
+                rows.add(new String[]{inputStr, out1, out2, out3});
+
+                // Clear screen effect (optional: remove if not needed)
+                System.out.println("\n");
+
+                // Print header once
+                System.out.printf("%-30s %-30s %-30s %-30s%n",
+                        "Input", "Output 1", "Output 2", "Output 3");
+
+                // Print all stored rows
+                for (String[] row : rows) {
+                    System.out.printf("%-30s %-30s %-30s %-30s%n", row[0], row[1], row[2], row[3]);
+                }
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid number for base " + base);
+            }
+        }
+
+        scanner.close();
+    }
+
+    // Helper function for subscripts
+    private static String getSubscript(int base) {
+        switch (base) {
+            case 2: return "\u2082";  // ₂
+            case 8: return "\u2088";  // ₈
+            case 10: return "\u2081\u2080"; // ₁₀
+            case 16: return "\u2081\u2086"; // ₁₆
+            default: return "";
+        }
+    }
+}
